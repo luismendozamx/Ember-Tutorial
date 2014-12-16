@@ -13,6 +13,38 @@ App.PostsRoute = Ember.Route.extend({
 	}
 });
 
+App.PostRoute = Ember.Route.extend({
+  model: function(params){
+    return posts.findBy('id', params.post_id);
+  }
+});
+
+App.PostController = Ember.ObjectController.extend( {
+  isEditing: false,
+
+  actions: {
+    edit: function(){
+      this.set('isEditing', true);
+    },
+    doneEditing: function(){
+      this.set('isEditing', false);
+    }
+  }
+
+});
+
+Ember.Handlebars.helper('format-date', function(date){
+  return moment(date).fromNow();
+});
+
+
+var showdown = new Showdown.converter();
+
+Ember.Handlebars.helper('format-markdown', function(input) {
+  return new Handlebars.SafeString(showdown.makeHtml(input));
+});
+
+
 var posts = [{
   id: '1',
   title: "Rails is Omakase",
@@ -30,7 +62,7 @@ var posts = [{
 }, {
   id: '3',
   title: "The Parley",
-  author: { name: "d2h" },
+  author: { name: "Luis" },
   date: new Date('12-24-2012'),
   excerpt: "My [appearance on the Ruby Rogues podcast](http://rubyrogues.com/056-rr-david-heinemeier-hansson/) recently came up for discussion again on the private Parley mailing list.",
   body: "A long list of topics were raised and I took a time to ramble at large about all of them at once. Apologies for not taking the time to be more succinct, but at least each topic has a header so you can skip stuff you don't care about.\n\n### Maintainability\n\nIt's simply not true to say that I don't care about maintainability. I still work on the oldest Rails app in the world."  
